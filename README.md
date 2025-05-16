@@ -15,33 +15,33 @@ Groupe : Yasmine, Colas, Théo et Juliette
 
 ### 🐱 Notre projet :
 
-Plateforme : Kubernetes avec OpenFaaS
+🔧 Plateforme : Kubernetes avec OpenFaaS
 
-Backend : Fonctions Python serverless
+🔧 Backend : Fonctions Python serverless
 
-Frontend : Simple interface web (HTML/JS ou React minimaliste)
+🔧 Frontend : Simple interface web (HTML/JS ou React minimaliste)
 
-Base de données : PostgreSQL (recommandé pour sécurité/fiabilité)
+🔧 Base de données : PostgreSQL (recommandé pour sécurité/fiabilité)
 
-Outils utilisés : Docker (build d'image de chaque fonction), Helm pour déployer OpenFaaS sur le cluster K8s, OpenFaaS CLI (faas-cli) pour push les fonctions
+🔧 Outils utilisés : Docker (build d'image de chaque fonction), Helm pour déployer OpenFaaS sur le cluster K8s, OpenFaaS CLI (faas-cli) pour push les fonctions
 
 
 
-Fonction 1 : generate_password_qrcode
+🔹 Fonction 1 : generate_password_qrcode
 
-Paramètre : username
+- Paramètre : username
 
-Génère :
+- Génère :
 
 mot de passe fort (24 caractères avec maj/min/chiffres/spéciaux)
 
 QRCode de ce mot de passe
 
-Chiffre et stocke en base :
+- Chiffre et stocke en base :
 
 username, password, gendate, expired=0
 
-Librairies utiles :
+- Librairies utiles :
 
 secrets ou random, string
 
@@ -51,29 +51,29 @@ psycopg2 ou SQLAlchemy pour DB
 
 
 
-Fonction 2 : generate_2fa_secret
+🔹 Fonction 2 : generate_2fa_secret
 
-Paramètre : username
+- Paramètre : username
 
 Génére un secret OTP (TOTP)
 
 Crée un QRCode compatible Google Authenticator
 
-Chiffre et stocke en base :
+- Chiffre et stocke en base :
 
 MFA, username, gendate
 
-Librairies utiles :
+- Librairies utiles :
 
 pyotp, qrcode
 
 
 
-Fonction 3 : authenticate_user
+🔹 Fonction 3 : authenticate_user
 
-Paramètres : username, password, code_2FA
+- Paramètres : username, password, code_2FA
 
-Vérifie :
+- Vérifie :
 
 mot de passe et code TOTP
 
