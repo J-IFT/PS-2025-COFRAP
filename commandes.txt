@@ -1,3 +1,4 @@
+FONCTION 1 :
 faas-cli template store pull python3-http
 faas-cli new generate-password-qrcode --lang python3-http
 docker run --name cofrap-postgres `
@@ -38,3 +39,4 @@ faas-cli push -f generate-password-qrcode.yaml
 faas-cli deploy -f generate-password-qrcode.yaml --gateway http://127.0.0.1:8080
 echo '{"username":"juliette"}' | faas-cli invoke generate-password-qrcode --gateway http://127.0.0.1:8080
 
+FONCTION 2 :
