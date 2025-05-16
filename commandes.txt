@@ -7,8 +7,8 @@ docker run --name cofrap-postgres `
   -p 5432:5432 `
   -d postgres
 docker ps
-faas-cli build -f stack.yaml
-faas-cli deploy -f stack.yaml
+faas-cli build -f generate-password-qrcode.yaml
+faas-cli deploy -f generate-password-qrcode.yaml
 echo '{"username":"juliette"}' | faas-cli invoke generate-password-qrcode
 
 Comme j'ai eu des soucis au moment d'exécuter l'avant dernière commande :
@@ -29,11 +29,12 @@ $PASSWORD = kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-
 Write-Output $PASSWORD
 9HFkJOyYIinA
 faas-cli login --gateway http://127.0.0.1:8080 --username admin --password $PASSWORD
-faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+faas-cli deploy -f generate-password-qrcode.yaml --gateway http://127.0.0.1:8080
 
 J'ai aussi déployé l'image en public sur DockerHub :
-faas-cli build -f stack.yaml
+faas-cli build -f generate-password-qrcode.yaml
 docker login
-faas-cli push -f stack.yaml
-faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+faas-cli push -f generate-password-qrcode.yaml
+faas-cli deploy -f generate-password-qrcode.yaml --gateway http://127.0.0.1:8080
+echo '{"username":"juliette"}' | faas-cli invoke generate-password-qrcode --gateway http://127.0.0.1:8080
 

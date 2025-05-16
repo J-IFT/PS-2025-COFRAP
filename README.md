@@ -26,6 +26,7 @@ Base de données : PostgreSQL (recommandé pour sécurité/fiabilité)
 Outils utilisés : Docker (build d'image de chaque fonction), Helm pour déployer OpenFaaS sur le cluster K8s, OpenFaaS CLI (faas-cli) pour push les fonctions
 
 
+
 Fonction 1 : generate_password_qrcode
 
 Paramètre : username
@@ -49,7 +50,9 @@ pyqrcode, cryptography ou Fernet pour chiffrement
 psycopg2 ou SQLAlchemy pour DB
 
 
+
 Fonction 2 : generate_2fa_secret
+
 Paramètre : username
 
 Génére un secret OTP (TOTP)
@@ -65,7 +68,9 @@ Librairies utiles :
 pyotp, qrcode
 
 
+
 Fonction 3 : authenticate_user
+
 Paramètres : username, password, code_2FA
 
 Vérifie :
@@ -77,6 +82,7 @@ que les identifiants ne sont pas expirés (>6 mois → expired = 1)
 Si expiré → relancer création mot de passe + 2FA
 
 Retourne JSON : succès / erreur / renouvellement nécessaire
+
 
 
 
