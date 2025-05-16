@@ -10,7 +10,49 @@ Groupe : Yasmine, Colas, Théo et Juliette
 
 ### 📌 Consignes du projet :
 
-à remplir ici
+Fonctions à préparer:
+
+- Une fonction générant un mot de passe pour un compte utilisateur spécifié en paramètres de la
+fonction, dont la complexité est fixe (24 caractères, majuscules/minuscules/chiffres/caractères
+spéciaux), et générant un qrcode à partir de ce mot de passe, stockant l'identifiant utilisateur et ce mot
+de passe (en le chiffrant!) dans votre base de données.
+
+- Une fonction générant un secret 2FA et le qrcode correspondant pour le compte utilisateur demandé
+en paramètres de la fonction, et stockant cette information (en la chiffrant!) en base de données.
+
+- Une fonction authentifiant un utilisateur à partir de son login, son mot de passe, et son code 2FA, après
+avoir vérifié que ces identifiants ont moins de six mois d'ancienneté, sinon elle doit marqué le compte
+comme "expiré" en base de données, et renvoyer une réponse à la frontend relançant le processus de
+création de mot de passe et de 2FA.
+
+Enfin, une frontend (simple), doit permettre d'authentifier un utilisateur, ou de le créer s'il n'existe pas (en
+suivant le process décrit plus haut), ou de relancer le processus de création de mot de passe et de 2FA si
+son login et son mot de passe sont expirés. Une autre équipe est en charge de sécuriser cette solution afin
+d'éviter les abus typiques (création de comptes en boucle/spammeurs/etc).
+
+Pour le moment, la COFRAP vous a demandé de réaliser un PoC (Proof of Concept) de cette solution, soit
+sur un petit cluster Kubernetes (KinD, K3S ou cloud), soit via minikube ou Docker (minikube préféré si vous
+ne pouvez pas, ou n'avez pas le temps, de mettre en place un cluster Kubernetes)
+
+Concernant la base de données, vous pouvez utiliser un Statefulset Kubernetes, une VM dédiée ou un
+conteneur docker dédié. La technologie utilisée est à votre discrétion: PostgreSQL, MariaDB, MongoDB,
+etc. Votre base de données ne devrait contenir qu'une seule table pour stocker les informations de vos
+utilisateurs. La table elle-même devrait être très simple, du type:
+ID username
+password
+MFA
+gendate
+expired
+ID username
+password
+MFA
+gendate
+expired
+
+Le langage de programmation a utiliser pour preparer vos fonctions est, la aussi, a votre discretion,
+cependant, Python est fortement recommande par la COFRAP, qui l'utilise deja dans la plupart de ses
+projets (traduction: vous trouverez toutes les bibliotheques de fonctions necessaires assez facilement avec
+Python).
 
 
 ### 🐱 Notre projet :
