@@ -1,3 +1,4 @@
 pyqrcode
 cryptography
 psycopg2-binary
+flask
