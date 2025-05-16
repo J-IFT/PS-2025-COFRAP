@@ -1,0 +1,9 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  generate-password-qrcode:
+    lang: python3-http
+    handler: ./generate-password-qrcode
+    image: jinfanti/generate-password-qrcode:latest
