@@ -1,4 +1,4 @@
-pyqrcode
 cryptography
+qrcode
 psycopg2-binary
-flask
+Pillow

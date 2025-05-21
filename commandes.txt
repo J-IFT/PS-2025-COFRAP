@@ -8,9 +8,9 @@ docker run --name cofrap-postgres `
   -p 5432:5432 `
   -d postgres
 docker ps
-faas-cli build -f generate-password-qrcode.yaml
-faas-cli deploy -f generate-password-qrcode.yaml
-echo '{"username":"juliette"}' | faas-cli invoke generate-password-qrcode
+faas-cli build -f stack.yaml
+faas-cli deploy -f stack.yaml
+echo '{"username":"juliette"}' | faas-cli invoke generate-password
 
 Comme j'ai eu des soucis au moment d'exécuter l'avant dernière commande :
 minikube start --driver=docker
@@ -28,15 +28,32 @@ kubectl get pods -n openfaas
 kubectl port-forward -n openfaas svc/gateway 8080:8080
 $PASSWORD = kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | %{ [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }
 Write-Output $PASSWORD
-9HFkJOyYIinA
+LE MOT DE PASSE SERT A SE CONNECTER SUR L'URL CI DESSOUS
 faas-cli login --gateway http://127.0.0.1:8080 --username admin --password $PASSWORD
-faas-cli deploy -f generate-password-qrcode.yaml --gateway http://127.0.0.1:8080
+faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
 
 J'ai aussi déployé l'image en public sur DockerHub :
-faas-cli build -f generate-password-qrcode.yaml
+faas-cli build -f stack.yaml
 docker login
-faas-cli push -f generate-password-qrcode.yaml
-faas-cli deploy -f generate-password-qrcode.yaml --gateway http://127.0.0.1:8080
-echo '{"username":"juliette"}' | faas-cli invoke generate-password-qrcode --gateway http://127.0.0.1:8080
+faas-cli push -f stack.yaml
+faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+echo '{"username":"juliette"}' | faas-cli invoke generate-password --gateway http://127.0.0.1:8080
+
+REFONTE FONCTION 1 :
+minikube start
+cd generate-password
+kubectl port-forward -n openfaas svc/gateway 8080:8080
+faas-cli new generate-password --lang python3-http
+faas-cli build -f stack.yaml
+faas-cli push -f stack.yaml
+faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+echo '{"username":"juliette"}' | faas-cli invoke generate-password --gateway http://127.0.0.1:8080
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install cofrap-db bitnami/postgresql
+$base64 = kubectl get secret cofrap-db-postgresql -o jsonpath="{.data.postgres-password}"
+$POSTGRES_PASSWORD = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($base64))
+Write-Output $POSTGRES_PASSWORD
+kubectl port-forward svc/cofrap-db-postgresql 5432:5432
 
 FONCTION 2 :

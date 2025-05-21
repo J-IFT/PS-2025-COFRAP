@@ -1,0 +1,13 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  generate-password:
+    lang: python3-http
+    handler: ./generate-password
+    image: jinfanti/generate-password:latest
+    environment:
+      FERNET_KEY: "S6_CeQEC5yejz844eyseaM3SQPW8U7dFNoLZKQGR-kc="
+      DATABASE_URL: "postgres://postgres:q5g1yHFHqO@127.0.0.1:5432/postgres"
+
