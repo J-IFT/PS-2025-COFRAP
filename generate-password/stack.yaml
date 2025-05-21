@@ -8,6 +8,5 @@ functions:
     handler: ./generate-password
     image: jinfanti/generate-password:latest
     environment:
-      FERNET_KEY: "S6_CeQEC5yejz844eyseaM3SQPW8U7dFNoLZKQGR-kc="
-      DATABASE_URL: "postgres://postgres:q5g1yHFHqO@127.0.0.1:5432/postgres"
-
+      FERNET_KEY: "MHfLCiI1NOlJuN8tH-fFK5Ny1_NxPmXz6Btb5WmCcKo="
+      DATABASE_URL: "postgres://postgres:cJNzEtOleI@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
