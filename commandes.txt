@@ -49,6 +49,7 @@ faas-cli push -f stack.yaml
 faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
 echo '{"username":"juliette"}' | faas-cli invoke generate-password --gateway http://127.0.0.1:8080
 
+Pour la base de données :
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install cofrap-db bitnami/postgresql
 $base64 = kubectl get secret cofrap-db-postgresql -o jsonpath="{.data.postgres-password}"
@@ -57,3 +58,7 @@ Write-Output $POSTGRES_PASSWORD
 kubectl port-forward svc/cofrap-db-postgresql 5432:5432
 
 FONCTION 2 :
+faas-cli new generate-2fa --lang python3-http
+faas-cli build -f stack.yaml
+faas-cli push -f stack.yaml
+faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080

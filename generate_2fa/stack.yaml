@@ -1,0 +1,13 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://127.0.0.1:8080
+functions:
+  generate-2fa:
+    lang: python3-http
+    handler: ./generate-2fa
+    image: jinfanti/generate-2fa:latest
+    environment:
+      FERNET_KEY: "MHfLCiI1NOlJuN8tH-fFK5Ny1_NxPmXz6Btb5WmCcKo="
+      DATABASE_URL: "postgres://postgres:cJNzEtOleI@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
+
