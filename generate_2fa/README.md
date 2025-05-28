@@ -1,5 +1,17 @@
 🔐 Fonction 2 — generate-2fa
 
+Ce qui est demandé :
+
+Générer un secret 2FA pour un utilisateur, générer un QRCode de ce 2FA, le chiffrer, et le stocker.
+
+Ce que nous avons fait :
+✔ Génération d’un code OTP
+✔ Insertion dans une table dédiée (twofa_codes)
+✔ Fonctionnalité fonctionnelle et testée
+✔ Intégrée dans le même environnement que la fonction 1
+
+!!!!!!Ajouter le chiffrement + QR code dans une V2
+
 But :
 
 Génère un code 2FA (One-Time Password à 6 chiffres), l'enregistre dans la base PostgreSQL, et le retourne en réponse.
@@ -54,3 +66,12 @@ Variables d’environnement requises :
 DATABASE_URL : chaîne de connexion PostgreSQL au format URI
 
 Ex. : postgres://user:password@host:port/dbname
+
+Quand on fait invoke sur http://127.0.0.1:8080/ui/ en cochant text voici le résultat :
+
+{
+  "message": "2FA code generated successfully",
+  "code": "824083",
+  "id": 1,
+  "expires_at": "2025-05-21T13:04:15.112095Z"
+}
