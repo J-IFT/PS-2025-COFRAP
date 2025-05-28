@@ -57,16 +57,21 @@ Python).
 
 ### 🐱 Notre projet :
 
-🔧 Plateforme : Kubernetes avec OpenFaaS
+🔧 Plateforme : Docker Kubernetes avec OpenFaaS
 
-🔧 Backend : Fonctions Python serverless
+🔧 Langage : Python (OpenFaaS template python3-http)
+
+🔧 Backend serverless : OpenFaaS déployé sur Minikube
 
 🔧 Frontend : Simple interface web (HTML/JS ou React minimaliste)
 
-🔧 Base de données : PostgreSQL (recommandé pour sécurité/fiabilité)
+🔧 Base de données : PostgreSQL (chart Helm Bitnami)
 
-🔧 Outils utilisés : Docker (build d'image de chaque fonction), Helm pour déployer OpenFaaS sur le cluster K8s, OpenFaaS CLI (faas-cli) pour push les fonctions
+🔧 Sécurité : chiffrement Fernet
 
+🔧 QR code : génération au format otpauth://
+
+🔧 Déploiement des fonctions : via DockerHub + faas-cli
 
 
 🔹 Fonction 1 : generate_password_qrcode
@@ -92,7 +97,6 @@ pyqrcode, cryptography ou Fernet pour chiffrement
 psycopg2 ou SQLAlchemy pour DB
 
 
-
 🔹 Fonction 2 : generate_2fa_secret
 
 - Paramètre : username
@@ -110,7 +114,6 @@ MFA, username, gendate
 pyotp, qrcode
 
 
-
 🔹 Fonction 3 : authenticate_user
 
 - Paramètres : username, password, code_2FA
@@ -126,6 +129,30 @@ Si expiré → relancer création mot de passe + 2FA
 Retourne JSON : succès / erreur / renouvellement nécessaire
 
 
+🔒 Table users (PostgreSQL)
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    totp_secret TEXT,
+    gendate TIMESTAMP NOT NULL,
+    expired BOOLEAN DEFAULT FALSE
+);
+
+
+🧪 Tests réalisés
+
+✅ Déploiement des 3 fonctions dans OpenFaaS
+
+✅ Tests via faas-cli invoke
+
+✅ Stockage en base PostgreSQL OK
+
+✅ Déchiffrement Fernet OK
+
+✅ Génération et vérification TOTP OK (via authenticator)
+
+✅ Détection d’un compte expiré si > 6 mois OK
 
 
 ### 💻 Applications et langages utilisés :

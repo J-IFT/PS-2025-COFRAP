@@ -5,12 +5,16 @@ Ce qui est demandé :
 Générer un secret 2FA pour un utilisateur, générer un QRCode de ce 2FA, le chiffrer, et le stocker.
 
 Ce que nous avons fait :
-✔ Génération d’un code OTP
-✔ Insertion dans une table dédiée (twofa_codes)
-✔ Fonctionnalité fonctionnelle et testée
-✔ Intégrée dans le même environnement que la fonction 1
 
-!!!!!!Ajouter le chiffrement + QR code dans une V2
+✔ Génére une clé TOTP aléatoire (compatible 2FA).
+
+✔ Encode cette clé en base32.
+
+✔ Chiffre la clé avec la même clé Fernet.
+
+✔ Génère un QR code otpauth:// à scanner dans une app 2FA.
+
+✔ Stocke la clé chiffrée dans users.totp_secret.
 
 But :
 

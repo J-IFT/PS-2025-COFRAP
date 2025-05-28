@@ -1,93 +1,108 @@
 import os
 import json
 import psycopg2
-import urllib.parse
-from datetime import datetime
+from datetime import datetime, timedelta
+from cryptography.fernet import Fernet
+import pyotp
 
 def handle(event, context):
-    # 1. Extraire DATABASE_URL
-    database_url = os.environ.get("DATABASE_URL")
-    if not database_url:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": "DATABASE_URL not set"})
-        }
-
-    # 2. Extraire le code de la requête JSON
     try:
-        body = json.loads(event.body)
-        code = body.get("code")
-        if not code:
+        # Chargement des variables d’environnement
+        FERNET_KEY = os.getenv("FERNET_KEY")
+        DATABASE_URL = os.getenv("DATABASE_URL")
+        if not FERNET_KEY or not DATABASE_URL:
+            return {
+                "statusCode": 500,
+                "body": "Missing environment variables"
+            }
+
+        fernet = Fernet(FERNET_KEY.encode())
+
+        # Lecture du corps JSON
+        data = json.loads(event.body)
+        username = data.get("username")
+        password_input = data.get("password")
+        otp_input = data.get("otp")
+
+        if not username or not password_input or not otp_input:
             return {
                 "statusCode": 400,
-                "body": json.dumps({"error": "Missing 'code' in request body"})
+                "body": "Missing required fields (username, password, otp)"
             }
-    except Exception as e:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": f"Invalid JSON: {str(e)}"})
-        }
 
-    # 3. Parse de l'URL pour psycopg2
-    try:
-        result = urllib.parse.urlparse(database_url)
-        dbname = result.path[1:]
-        conn = psycopg2.connect(
-            dbname=dbname,
-            user=result.username,
-            password=result.password,
-            host=result.hostname,
-            port=result.port
-        )
-        cursor = conn.cursor()
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": f"DB connection error: {str(e)}"})
-        }
+        # Connexion base PostgreSQL
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
 
-    # 4. Vérification du code
-    try:
-        now = datetime.utcnow()
-        cursor.execute("""
-            SELECT id FROM twofa_codes
-            WHERE code = %s AND expires_at > %s
-        """, (code, now))
-        row = cursor.fetchone()
+        # Vérification utilisateur
+        cur.execute("SELECT password, totp_secret, gendate, expired FROM users WHERE username = %s", (username,))
+        row = cur.fetchone()
 
         if not row:
-            cursor.close()
-            conn.close()
             return {
-                "statusCode": 200,
-                "body": json.dumps({
-                    "valid": False,
-                    "message": "Code is invalid or expired"
-                })
+                "statusCode": 404,
+                "body": "User not found"
             }
 
-        # 5. Rendre le code inutilisable (anti-rejeu)
-        cursor.execute("""
-            UPDATE twofa_codes
-            SET expires_at = %s
-            WHERE id = %s
-        """, (now, row[0]))
-        conn.commit()
-        cursor.close()
-        conn.close()
+        encrypted_password, encrypted_totp_secret, gendate, expired = row
 
+        # Vérifie si le compte est expiré
+        now = datetime.utcnow()
+        if gendate + timedelta(days=180) < now or expired:
+            # Mise à jour en base si non déjà expiré
+            if not expired:
+                cur.execute("UPDATE users SET expired = true WHERE username = %s", (username,))
+                conn.commit()
+            cur.close()
+            conn.close()
+            return {
+                "statusCode": 403,
+                "body": "Account expired. Please reset password and 2FA."
+            }
+
+        # Déchiffrement
+        try:
+            decrypted_password = fernet.decrypt(encrypted_password.encode()).decode()
+            decrypted_totp_secret = fernet.decrypt(encrypted_totp_secret.encode()).decode()
+        except Exception as e:
+            cur.close()
+            conn.close()
+            return {
+                "statusCode": 500,
+                "body": f"Decryption error: {str(e)}"
+            }
+
+        # Vérification mot de passe
+        if password_input != decrypted_password:
+            cur.close()
+            conn.close()
+            return {
+                "statusCode": 401,
+                "body": "Invalid password"
+            }
+
+        # Vérification TOTP
+        totp = pyotp.TOTP(decrypted_totp_secret)
+        if not totp.verify(otp_input):
+            cur.close()
+            conn.close()
+            return {
+                "statusCode": 401,
+                "body": "Invalid OTP"
+            }
+
+        cur.close()
+        conn.close()
         return {
             "statusCode": 200,
             "body": json.dumps({
-                "valid": True,
-                "message": "Code is valid and has been marked as used"
+                "message": "Authentication successful",
+                "username": username
             })
         }
 
     except Exception as e:
-        cursor.close()
-        conn.close()
         return {
             "statusCode": 500,
-            "body": json.dumps({"error": f"DB error: {str(e)}"})
+            "body": f"Internal server error: {str(e)}"
         }

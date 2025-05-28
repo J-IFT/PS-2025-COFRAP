@@ -6,9 +6,13 @@ Générer un mot de passe complexe (24 caractères), le chiffrer, créer un QR C
 
 Ce que nous avons fait :
 ✔ Mot de passe généré avec complexité
+
 ✔ QR code encodé en base64
+
 ✔ Stockage en base PostgreSQL (chiffré avec Fernet)
+
 ✔ Données sauvegardées dans la table users
+
 ✔ Fonction OpenFaaS fonctionnelle et testée
 
 🎯 Objectif :

@@ -76,6 +76,7 @@ def handle(event, context):
             "statusCode": 200,
             "body": json.dumps({
                 "username": username,
+                "password": password,
                 "password_qr": qrcode_b64
             })
         }

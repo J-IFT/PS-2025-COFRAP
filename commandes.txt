@@ -66,6 +66,33 @@ faas-cli new generate-2fa --lang python3-http
 faas-cli build -f stack.yaml
 faas-cli push -f stack.yaml
 faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+echo '{"username":"juliette"}' | faas-cli invoke generate-2fa --gateway http://127.0.0.1:8080
 
 FONCTION 3 :
 faas-cli new verify-2fa --lang python3-http
+faas-cli build -f stack.yaml
+faas-cli push -f stack.yaml
+faas-cli deploy -f stack.yaml --gateway http://127.0.0.1:8080
+echo '{"username":"juliette", "password":"LE_MOT_DE_PASSE", "otp":"123456"}' | faas-cli invoke verify-2fa --gateway http://127.0.0.1:8080
+
+GLOBAL :
+On lance docker desktop, on lance la db
+puis on fait minikube start
+ensuite
+kubectl port-forward -n openfaas svc/gateway 8080:8080
+$PASSWORD = kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | %{ [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }
+Write-Output $PASSWORD
+LE MOT DE PASSE SERT A SE CONNECTER SUR L'URL CI DESSOUS
+faas-cli login --gateway http://127.0.0.1:8080 --username admin --password $PASSWORD
+on lance fernet.py aussi pour récupérer la nouvelle clé et la changer dans les stacks
+fonction 1 : echo '{"username":"juliette"}' | faas-cli invoke generate-password --gateway http://127.0.0.1:8080
+fonction 2 : echo '{"username":"juliette"}' | faas-cli invoke generate-2fa --gateway http://127.0.0.1:8080
+fonction 3 : echo '{"username":"juliette", "password":"LE_MOT_DE_PASSE", "otp":"123456"}' | faas-cli invoke verify-2fa --gateway http://127.0.0.1:8080
+Regarde le mot de passe généré (fonction 1) 
+puis 
+Regarde la clé 2FA (fonction 2) 
+et Appelle la fonction 3 Remplace : "LE_MOT_DE_PASSE" → par le mot de passe généré à l’étape 1 et "123456" → par le code TOTP actuel affiché par ton appli 2FA
+pour l'instant comme on a pas de front on va exécuter le show_qrcode.py et le scanner avec google authenticator pour avoir le fameux code ci-DESSOUS
+la valeur du qrcode du python vient de la fonction 2
+la valeur du mot de passe vient de password de la fonction 1
+et si vous avez ça à l'appel de la fonction 3 : {"message": "Authentication successful", "username": "juliette"} c'est gagné :)

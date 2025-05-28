@@ -8,5 +8,5 @@ functions:
     handler: ./verify-2fa
     image: jinfanti/verify-2fa:latest
     environment:
-      FERNET_KEY: "MHfLCiI1NOlJuN8tH-fFK5Ny1_NxPmXz6Btb5WmCcKo="
+      FERNET_KEY: "rblAPTuZKdNT2MnRFk9wLhVE4LJrcoT2TdtPF-FtHfo="
       DATABASE_URL: "postgres://postgres:cJNzEtOleI@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
