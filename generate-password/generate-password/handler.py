@@ -27,7 +27,12 @@ def handle(event, context):
         if not FERNET_KEY or not DATABASE_URL:
             return {
                 "statusCode": 500,
-                "body": "Missing environment variables"
+                "body": "Missing environment variables",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         fernet = Fernet(FERNET_KEY.encode())
@@ -38,7 +43,12 @@ def handle(event, context):
         if not username:
             return {
                 "statusCode": 400,
-                "body": "Missing 'username' in request body"
+                "body": "Missing 'username' in request body",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Génération du mot de passe et des données associées
@@ -78,11 +88,21 @@ def handle(event, context):
                 "username": username,
                 "password": password,
                 "password_qr": qrcode_b64
-            })
+            }),
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "body": f"Internal error: {str(e)}"
+            "body": f"Internal error: {str(e)}",
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
         }

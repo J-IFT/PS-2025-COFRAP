@@ -23,7 +23,12 @@ def handle(event, context):
         if not FERNET_KEY or not DATABASE_URL:
             return {
                 "statusCode": 500,
-                "body": json.dumps({"error": "Missing environment variables"})
+                "body": json.dumps({"error": "Missing environment variables"}),
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         fernet = Fernet(FERNET_KEY.encode())
@@ -34,7 +39,12 @@ def handle(event, context):
         if not username:
             return {
                 "statusCode": 400,
-                "body": json.dumps({"error": "Missing 'username' in request body"})
+                "body": json.dumps({"error": "Missing 'username' in request body"}),
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Générer une clé TOTP encodée en base32
@@ -89,11 +99,21 @@ def handle(event, context):
             "body": json.dumps({
                 "message": "TOTP secret generated and stored",
                 "qrcode": qrcode_b64
-            })
+            }),
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+            }
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
+            "body": json.dumps({"error": str(e)}),
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
         }

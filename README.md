@@ -63,7 +63,7 @@ Python).
 
 🔧 Backend serverless : OpenFaaS déployé sur Minikube
 
-🔧 Frontend : Simple interface web HTML/CSS
+🔧 Frontend : Simple interface web HTML/CSS et JavaScript fetch API pour les appels backend
 
 🔧 Base de données : PostgreSQL (chart Helm Bitnami)
 
@@ -130,6 +130,7 @@ Retourne JSON : succès / erreur / renouvellement nécessaire
 
 
 🔒 Table users (PostgreSQL)
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
@@ -153,6 +154,76 @@ CREATE TABLE IF NOT EXISTS users (
 ✅ Génération et vérification TOTP OK (via authenticator)
 
 ✅ Détection d’un compte expiré si > 6 mois OK
+
+
+📝 Front-end 
+
+Cette page HTML fournit une interface simple pour :
+
+Créer un compte utilisateur avec génération automatique d’un mot de passe QR code et d’un QR code 2FA.
+
+Se connecter avec un nom d’utilisateur, mot de passe et code 2FA.
+
+Elle interagit avec un backend OpenFaaS exposé localement sur http://127.0.0.1:8080.
+
+Structure de la page :
+
+1. Création de compte
+
+Champ texte : Nom d'utilisateur
+
+Bouton : Créer un compte
+
+Processus :
+
+En cliquant sur le bouton, la page envoie deux requêtes successives au backend :
+
+- /function/generate-password : génère un mot de passe unique et fournit un QR code image.
+
+- /function/generate-2fa : génère une clé 2FA et fournit un QR code 2FA.
+
+Les deux QR codes sont affichés sous la section.
+
+2. Connexion
+
+Champs texte :
+
+- Nom d'utilisateur
+
+- Mot de passe
+
+- Code 2FA (ex: 123456)
+
+- Bouton : Se connecter
+
+Processus :
+
+- En cliquant sur le bouton, la page envoie une requête POST au backend sur /function/verify-2fa avec le JSON contenant username, password et otp.
+
+- Le résultat (succès ou erreur) est affiché dans un bloc texte.
+
+Instructions d’utilisation :
+
+Créer un compte :
+
+- Renseigner un nom d’utilisateur.
+
+- Cliquer sur Créer un compte.
+
+- Scanner les deux QR codes (mot de passe et 2FA) avec une application de lecture QR et une application Authenticator (ex: Google Authenticator).
+
+
+Se connecter :
+
+- Saisir le nom d’utilisateur.
+
+- Entrer le mot de passe lu dans le QR code.
+
+- Entrer le code 2FA généré par l’application Authenticator.
+
+- Cliquer sur Se connecter.
+
+- Voir le résultat en bas de page.
 
 
 ### 💻 Applications et langages utilisés :

@@ -13,7 +13,12 @@ def handle(event, context):
         if not FERNET_KEY or not DATABASE_URL:
             return {
                 "statusCode": 500,
-                "body": "Missing environment variables"
+                "body": "Missing environment variables",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         fernet = Fernet(FERNET_KEY.encode())
@@ -27,7 +32,12 @@ def handle(event, context):
         if not username or not password_input or not otp_input:
             return {
                 "statusCode": 400,
-                "body": "Missing required fields (username, password, otp)"
+                "body": "Missing required fields (username, password, otp)",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Connexion base PostgreSQL
@@ -41,7 +51,12 @@ def handle(event, context):
         if not row:
             return {
                 "statusCode": 404,
-                "body": "User not found"
+                "body": "User not found",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         encrypted_password, encrypted_totp_secret, gendate, expired = row
@@ -57,7 +72,12 @@ def handle(event, context):
             conn.close()
             return {
                 "statusCode": 403,
-                "body": "Account expired. Please reset password and 2FA."
+                "body": "Account expired. Please reset password and 2FA.",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Déchiffrement
@@ -69,7 +89,12 @@ def handle(event, context):
             conn.close()
             return {
                 "statusCode": 500,
-                "body": f"Decryption error: {str(e)}"
+                "body": f"Decryption error: {str(e)}",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Vérification mot de passe
@@ -78,7 +103,12 @@ def handle(event, context):
             conn.close()
             return {
                 "statusCode": 401,
-                "body": "Invalid password"
+                "body": "Invalid password",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         # Vérification TOTP
@@ -88,7 +118,12 @@ def handle(event, context):
             conn.close()
             return {
                 "statusCode": 401,
-                "body": "Invalid OTP"
+                "body": "Invalid OTP",
+                "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
             }
 
         cur.close()
@@ -98,11 +133,21 @@ def handle(event, context):
             "body": json.dumps({
                 "message": "Authentication successful",
                 "username": username
-            })
+            }),
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "body": f"Internal server error: {str(e)}"
+            "body": f"Internal server error: {str(e)}",
+            "headers": {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Access-Control-Allow-Methods": "*"
+                }
         }
