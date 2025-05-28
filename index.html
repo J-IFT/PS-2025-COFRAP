@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>COFRAP Auth</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    input, button { display: block; margin: 1rem 0; width: 100%; padding: 0.5rem; }
+    img { max-width: 100%; margin-top: 1rem; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Création de compte</h1>
+  <input id="usernameCreate" placeholder="Nom d'utilisateur" />
+  <button onclick="createAccount()">Créer un compte</button>
+  <div id="qrcode" class="hidden">
+    <h3>QR Code du mot de passe</h3>
+    <img id="passwordQR" />
+    <h3>QR Code 2FA</h3>
+    <img id="otpQR" />
+  </div>
+
+  <hr />
+
+  <h1>Connexion</h1>
+  <input id="usernameLogin" placeholder="Nom d'utilisateur" />
+  <input id="password" placeholder="Mot de passe" />
+  <input id="otp" placeholder="Code 2FA (ex: 123456)" />
+  <button onclick="login()">Se connecter</button>
+
+  <pre id="result"></pre>
+
+  <script>
+    const gateway = "http://127.0.0.1:8080";
+
+    async function createAccount() {
+      const username = document.getElementById("usernameCreate").value;
+
+      // Étape 1 : generate-password
+      const pwRes = await fetch(`${gateway}/function/generate-password`, {
+        method: "POST",
+        body: JSON.stringify({ username }),
+      });
+      const pwData = await pwRes.json();
+
+      // Étape 2 : generate-2fa
+      const otpRes = await fetch(`${gateway}/function/generate-2fa`, {
+        method: "POST",
+        body: JSON.stringify({ username }),
+      });
+      const otpData = await otpRes.json();
+
+      document.getElementById("passwordQR").src = `data:image/png;base64,${pwData.password_qr}`;
+      document.getElementById("otpQR").src = `data:image/png;base64,${otpData.qrcode}`;
+      document.getElementById("qrcode").classList.remove("hidden");
+    }
+
+    async function login() {
+      const username = document.getElementById("usernameLogin").value;
+      const password = document.getElementById("password").value;
+      const otp = document.getElementById("otp").value;
+
+      const res = await fetch(`${gateway}/function/verify-2fa`, {
+        method: "POST",
+        body: JSON.stringify({ username, password, otp }),
+      });
+
+      const data = await res.json();
+      document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>

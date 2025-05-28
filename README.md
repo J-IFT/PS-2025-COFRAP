@@ -63,7 +63,7 @@ Python).
 
 🔧 Backend serverless : OpenFaaS déployé sur Minikube
 
-🔧 Frontend : Simple interface web (HTML/JS ou React minimaliste)
+🔧 Frontend : Simple interface web HTML/CSS
 
 🔧 Base de données : PostgreSQL (chart Helm Bitnami)
 

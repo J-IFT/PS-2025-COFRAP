@@ -96,3 +96,20 @@ pour l'instant comme on a pas de front on va exécuter le show_qrcode.py et le s
 la valeur du qrcode du python vient de la fonction 2
 la valeur du mot de passe vient de password de la fonction 1
 et si vous avez ça à l'appel de la fonction 3 : {"message": "Authentication successful", "username": "juliette"} c'est gagné :)
+
+nous avons un front basique :
+pour éviter le CORS qui pose problème en faisant double clic sur index.html
+helm upgrade openfaas openfaas/openfaas `
+  --namespace openfaas `
+  --set functionNamespace=openfaas-fn `
+  --set generateBasicAuth=true `
+  --set gateway.cors.enabled=true `
+  --set gateway.cors.origin="*" `
+  --reuse-values
+puis
+kubectl get pods -n openfaas
+puis
+kubectl port-forward -n openfaas svc/gateway 8080:8080
+puis
+python -m http.server 8000
+puis http://localhost:8000/index.html
