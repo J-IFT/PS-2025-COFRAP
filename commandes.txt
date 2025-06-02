@@ -1,3 +1,5 @@
+Liste des commandes exécutées dans l'ordre chronologique : bien TOUT lire avant d'exécuter
+
 FONCTION 1 :
 faas-cli template store pull python3-http
 faas-cli new generate-password-qrcode --lang python3-http
@@ -11,6 +13,8 @@ docker ps
 faas-cli build -f stack.yaml
 faas-cli deploy -f stack.yaml
 echo '{"username":"juliette"}' | faas-cli invoke generate-password
+
+Le USERNAME c'est pas forcément "juliette", ça peut être n'importe quoi.
 
 Comme j'ai eu des soucis au moment d'exécuter l'avant dernière commande :
 minikube start --driver=docker
@@ -84,7 +88,6 @@ $PASSWORD = kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-
 Write-Output $PASSWORD
 LE MOT DE PASSE SERT A SE CONNECTER SUR L'URL CI DESSOUS
 faas-cli login --gateway http://127.0.0.1:8080 --username admin --password $PASSWORD
-on lance fernet.py aussi pour récupérer la nouvelle clé et la changer dans les stacks
 fonction 1 : echo '{"username":"juliette"}' | faas-cli invoke generate-password --gateway http://127.0.0.1:8080
 fonction 2 : echo '{"username":"juliette"}' | faas-cli invoke generate-2fa --gateway http://127.0.0.1:8080
 fonction 3 : echo '{"username":"juliette", "password":"LE_MOT_DE_PASSE", "otp":"123456"}' | faas-cli invoke verify-2fa --gateway http://127.0.0.1:8080
@@ -97,19 +100,22 @@ la valeur du qrcode du python vient de la fonction 2
 la valeur du mot de passe vient de password de la fonction 1
 et si vous avez ça à l'appel de la fonction 3 : {"message": "Authentication successful", "username": "juliette"} c'est gagné :)
 
-nous avons un front basique :
-pour éviter le CORS qui pose problème en faisant double clic sur index.html
-helm upgrade openfaas openfaas/openfaas `
-  --namespace openfaas `
-  --set functionNamespace=openfaas-fn `
-  --set generateBasicAuth=true `
-  --set gateway.cors.enabled=true `
-  --set gateway.cors.origin="*" `
-  --reuse-values
-puis
-kubectl get pods -n openfaas
-puis
+Front basique :
+python -m http.server 8000
+puis http://localhost:8000/index.html
+
+Commandes à faire au lancement :
+On lance docker desktop, on lance la db manuellement
+puis on fait minikube start
+ensuite
 kubectl port-forward -n openfaas svc/gateway 8080:8080
 puis
 python -m http.server 8000
 puis http://localhost:8000/index.html
+tout se fait via le front, que ce soit pour se connecter ou pour créer un compte avec les qrcodes
+
+BIEN LIRE LE README POUR LE FONCTIONNEMENT DE TOUT LE PROJET
+
+Axes d'amélioration :
+- fernet : cacher la clé des stack si possible donc variabiliser
+- améliorer le front côté ui
