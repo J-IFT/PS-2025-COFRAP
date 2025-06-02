@@ -119,3 +119,5 @@ BIEN LIRE LE README POUR LE FONCTIONNEMENT DE TOUT LE PROJET
 Axes d'amélioration :
 - fernet : cacher la clé des stack si possible donc variabiliser
 - améliorer le front côté ui
+- passer au cloud
+Rien de tout ça n'est demandé, mais ça peut être intéressant à développer.
