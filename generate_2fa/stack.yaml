@@ -8,6 +8,6 @@ functions:
     handler: ./generate-2fa
     image: jinfanti/generate-2fa:latest
     environment:
-      FERNET_KEY: "rblAPTuZKdNT2MnRFk9wLhVE4LJrcoT2TdtPF-FtHfo="
+      FERNET_KEY: "dtn3GvA6FGTVBHLgtQMzdA1WUpY6AriWmKA0MG-faoU="
       DATABASE_URL: "postgres://postgres:cJNzEtOleI@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
 
