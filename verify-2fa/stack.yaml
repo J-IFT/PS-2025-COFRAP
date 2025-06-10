@@ -9,4 +9,4 @@ functions:
     image: jinfanti/verify-2fa:latest
     environment:
       FERNET_KEY: "dtn3GvA6FGTVBHLgtQMzdA1WUpY6AriWmKA0MG-faoU="
-      DATABASE_URL: "postgres://postgres:cJNzEtOleI@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
+      DATABASE_URL: "postgres://postgres:gMg50xmq03@cofrap-db-postgresql.default.svc.cluster.local:5432/postgres"
